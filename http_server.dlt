@@ -24,7 +24,7 @@ struct HttpServer:
         client: i64 = TcpSocket.accept(server)
         if client == -1:
             # Return empty request on failure
-            req: Request = Request{}
+            req: Request = Request()
             return req
         
         # Allocate buffer for reading request
@@ -37,7 +37,7 @@ struct HttpServer:
             # No data received, return empty request
             Memory.free(buffer)
             TcpSocket.close(client)
-            req: Request = Request{}
+            req: Request = Request()
             return req
         
         # Null-terminate the buffer

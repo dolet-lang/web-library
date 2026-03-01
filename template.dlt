@@ -179,36 +179,61 @@ struct Template:
 
     # ========== File-based Template Rendering ==========
     
-    # Render template from file with context
+    # Render template from file with context (relative to EXECUTABLE directory)
+    # This is the default - templates ship with your application
     # Loads file content and calls substitute
     # Returns: rendered string, or empty string on file error
     # Requirements: 6.1
     static fun render_file(path: str, ctx: Context) -> str:
-        # Open file for reading
-        handle: i64 = FileOps.file_open_read(path)
+        # File.open() resolves relative to exe directory by default
+        file: File = File.open(path, "r")
         
-        if handle == -1:
+        if not file.is_open:
             # File not found, return empty string
             result: i64 = Memory.malloc(1)
             Memory.write_i8(result, 0 as i8)
             return result as str
         
         # Read entire file content
-        content: i64 = FileOps.file_read_all(handle)
+        content: str = file.read_text()
+        file.close()
         
-        # Close file
-        FileOps.file_close(handle)
-        
-        if content == 0:
+        if (content as i64) == 0:
             # Failed to read, return empty string
             result: i64 = Memory.malloc(1)
             Memory.write_i8(result, 0 as i8)
             return result as str
         
         # Substitute the template string
-        rendered: str = Template.substitute(content as str, ctx)
+        rendered: str = Template.substitute(content, ctx)
         
-        # Free the file content buffer
-        Memory.free(content)
+        return rendered
+    
+    # Render template from file with context (relative to WORKING directory)
+    # Use this for user-provided templates or dynamic paths
+    # Loads file content and calls substitute
+    # Returns: rendered string, or empty string on file error
+    static fun render_file_cwd(path: str, ctx: Context) -> str:
+        # Use File.open_cwd for working directory relative paths
+        file: File = File.open_cwd(path, "r")
+        
+        if not file.is_open:
+            # File not found, return empty string
+            result: i64 = Memory.malloc(1)
+            Memory.write_i8(result, 0 as i8)
+            return result as str
+        
+        # Read entire file content
+        content: str = file.read_text()
+        file.close()
+        
+        if (content as i64) == 0:
+            # Failed to read, return empty string
+            result: i64 = Memory.malloc(1)
+            Memory.write_i8(result, 0 as i8)
+            return result as str
+        
+        # Substitute the template string
+        rendered: str = Template.substitute(content, ctx)
         
         return rendered

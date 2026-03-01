@@ -17,7 +17,7 @@ struct WebApp:
     # Returns: new WebApp instance with port set
     # Requirements: 1.1
     static fun create(port: i32) -> WebApp:
-        app: WebApp = WebApp{}
+        app: WebApp = WebApp()
         app.port = port
         app.server_socket = -1
         return app

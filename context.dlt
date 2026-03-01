@@ -39,7 +39,7 @@ struct Context:
     # Returns: new Context instance
     # Requirements: 5.1
     static fun new() -> Context:
-        ctx: Context = Context{}
+        ctx: Context = Context()
         ctx.capacity = 16  # Default capacity of 16 entries
         ctx.count = 0
         # Allocate arrays for keys and values (8 bytes per pointer)
