@@ -13,4 +13,4 @@ description = HTTP server and WebSocket support for building web applications
 # No runtime DLLs to copy
 
 [dependencies]
-# No external dependencies
+net = "0.1"

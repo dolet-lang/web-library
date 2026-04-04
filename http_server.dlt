@@ -45,7 +45,7 @@ struct HttpServer:
         
         # Parse HTTP request
         data: str = buffer as str
-        req: Request = Http.parse_request(data)
+        req: Request = HttpParser.parse(data)
         
         # Store client socket in headers field for later use
         # (This allows send_response to know which client to respond to)
@@ -70,66 +70,27 @@ struct HttpServer:
     # Run server loop with handler function
     # Handler receives Request and returns response string
     # Requirements: 4.4
-    static fun run(server: i64, handler: fun(Request) -> str):
-        # Main server loop - runs forever
-        while true:
-            # Accept incoming request
-            req: Request = HttpServer.accept_request(server)
-            
-            # Get client socket from headers field
-            client: i64 = req.headers
-            
-            # Check if request is valid (has method)
-            if Memory.strlen(req.method) == 0:
-                # Invalid request, skip
-                continue
-            
-            # Call handler to get response
-            response: str = handler(req)
-            
-            # Send response to client
-            HttpServer.send_response(client, response)
+    static fun run(server: i64, handler_ptr: i64):
+        # Deprecated: use WebApp.run() instead
+        print("HttpServer.run: use WebApp.run() instead")
     
     # Create HTTP 500 Internal Server Error response
     # Requirements: 4.5
     static fun error_500() -> str:
-        return Http.format_response(500, "text/plain", "Internal Server Error")
+        return HttpFormatter.format(500, "text/plain", "Internal Server Error")
     
     # Create HTTP 404 Not Found response
     static fun error_404() -> str:
-        return Http.format_response(404, "text/plain", "Not Found")
+        return HttpFormatter.format(404, "text/plain", "Not Found")
     
     # Create HTTP 400 Bad Request response
     static fun error_400() -> str:
-        return Http.format_response(400, "text/plain", "Bad Request")
+        return HttpFormatter.format(400, "text/plain", "Bad Request")
     
     # Run server loop with handler function and error handling
     # Handler receives Request and returns response string
     # If handler returns empty string, sends 500 error
     # Requirements: 4.4, 4.5
-    static fun run_safe(server: i64, handler: fun(Request) -> str):
-        # Main server loop - runs forever
-        while true:
-            # Accept incoming request
-            req: Request = HttpServer.accept_request(server)
-            
-            # Get client socket from headers field
-            client: i64 = req.headers
-            
-            # Check if request is valid (has method)
-            if Memory.strlen(req.method) == 0:
-                # Invalid request - send 400 Bad Request
-                if client != -1:
-                    HttpServer.send_response(client, HttpServer.error_400())
-                continue
-            
-            # Call handler to get response
-            response: str = handler(req)
-            
-            # Check if handler returned valid response
-            if Memory.strlen(response) == 0:
-                # Handler failed - send 500 Internal Server Error
-                HttpServer.send_response(client, HttpServer.error_500())
-            else:
-                # Send response to client
-                HttpServer.send_response(client, response)
+    static fun run_safe(server: i64, handler_ptr: i64):
+        # Deprecated: use WebApp.run() instead
+        print("HttpServer.run_safe: use WebApp.run() instead")

@@ -3,6 +3,7 @@
 # ============================
 # Dolet web framework with routing, templates, and HTTP server
 module web
+requires net
 load web/websocket_internal
 load web/http_parser
 load web/http_formatter
@@ -12,10 +13,6 @@ load web/context
 load web/response
 load web/http_server
 load web/webapp
-
-# Private — internal implementation details
-private websocket_internal
-private http_formatter
 
 # Exported structs — public API
 export WebApp
