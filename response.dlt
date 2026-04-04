@@ -231,7 +231,7 @@ struct Response:
     # Requirements: 4.4
     static fun render(template_path: str, ctx: i64) -> str:
         # Use Template.render_file to load and substitute template
-        rendered: str = Template.render_file_cwd(template_path, ctx)
+        rendered: str = Template.render_file(template_path, ctx)
         
         # Check if rendering failed (empty string indicates file not found)
         rendered_len: i64 = Memory.strlen(rendered)
