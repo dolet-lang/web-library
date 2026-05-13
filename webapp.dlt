@@ -26,12 +26,12 @@ struct WebApp:
     
     # Register a GET route handler for the specified path
     # Requirements: 2.1
-    fun get(path: str, handler: @heap fun(Request) -> str):
+    fun get(path: str, handler: i64):
         WebRouter.add("GET", path, handler)
     
     # Register a POST route handler for the specified path
     # Requirements: 2.2
-    fun post(path: str, handler: @heap fun(Request) -> str):
+    fun post(path: str, handler: i64):
         WebRouter.add("POST", path, handler)
     
     # ========== Server Operations ==========
@@ -74,7 +74,7 @@ struct WebApp:
 
         # Call handler and send response
         req.route_pattern = WebRouter.get_matched_pattern()
-        handler_fn: @heap fun(Request) -> str = handler as @heap fun(Request) -> str
+        handler_fn: fun(Request) -> str = handler as fun(Request) -> str
         response: str = handler_fn(req)
         WebSocket.write(client, response)
         WebSocket.close(client)
