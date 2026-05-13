@@ -8,7 +8,7 @@
 struct Route:
     method: str = ""      # HTTP method: "GET", "POST", etc.
     path: str = ""        # URL path pattern: "/user/{id}"
-    handler: i64 = 0      # Function pointer to handler
+    handler: i64 = 0      # Heap closure pointer for route handler
 
 # ============================================================================
 # WebRouter struct - URL routing with generic add() method
@@ -16,7 +16,7 @@ struct Route:
 # ============================================================================
 struct WebRouter:
     # Static storage for routes
-    # Each route takes 24 bytes (3 x i64 for method ptr, path ptr, handler)
+    # Each route takes 24 bytes (3 x i64 for method ptr, path ptr, handler closure)
     static routes: i64 = 0          # Pointer to routes array
     static route_count: i32 = 0     # Number of registered routes
     static max_routes: i32 = 100    # Maximum routes capacity
@@ -108,7 +108,7 @@ struct WebRouter:
 
     # Register a route with any HTTP method
     # Requirements: 2.1, 2.2
-    static fun add(method: str, path: str, handler: i64):
+    static fun add(method: str, path: str, handler: @heap fun(Request) -> str):
         WebRouter.init()
 
         if WebRouter.route_count >= WebRouter.max_routes:
@@ -123,8 +123,8 @@ struct WebRouter:
         # Store path pointer
         Memory.write_i64(WebRouter.routes + offset + 8, path as i64)
 
-        # Store handler pointer
-        Memory.write_i64(WebRouter.routes + offset + 16, handler)
+        # Store heap closure pointer
+        Memory.write_i64(WebRouter.routes + offset + 16, handler as i64)
 
         WebRouter.route_count = WebRouter.route_count + 1
 
@@ -271,7 +271,7 @@ struct WebRouter:
 # ============================================================================
 struct Router:
     # Static storage for routes
-    # Each route takes 24 bytes (3 x i64 for method ptr, path ptr, handler)
+    # Each route takes 24 bytes (3 x i64 for method ptr, path ptr, handler closure)
     static routes: i64 = 0          # Pointer to routes array
     static route_count: i32 = 0     # Number of registered routes
     static max_routes: i32 = 100    # Maximum routes capacity
@@ -360,7 +360,7 @@ struct Router:
 
     # Register a GET route
     # Requirements: 5.1
-    static fun get(path: str, handler: i64):
+    static fun get(path: str, handler: @heap fun(Request) -> str):
         Router.init()
 
         if Router.route_count >= Router.max_routes:
@@ -375,14 +375,14 @@ struct Router:
         # Store path pointer
         Memory.write_i64(Router.routes + offset + 8, path as i64)
 
-        # Store handler pointer
-        Memory.write_i64(Router.routes + offset + 16, handler)
+        # Store heap closure pointer
+        Memory.write_i64(Router.routes + offset + 16, handler as i64)
 
         Router.route_count = Router.route_count + 1
 
     # Register a POST route
     # Requirements: 5.2
-    static fun post(path: str, handler: i64):
+    static fun post(path: str, handler: @heap fun(Request) -> str):
         Router.init()
 
         if Router.route_count >= Router.max_routes:
@@ -397,8 +397,8 @@ struct Router:
         # Store path pointer
         Memory.write_i64(Router.routes + offset + 8, path as i64)
 
-        # Store handler pointer
-        Memory.write_i64(Router.routes + offset + 16, handler)
+        # Store heap closure pointer
+        Memory.write_i64(Router.routes + offset + 16, handler as i64)
 
         Router.route_count = Router.route_count + 1
 
