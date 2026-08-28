@@ -4,6 +4,7 @@
 [info]
 name = web
 version = 1.0.0
+layer = composition
 description = HTTP server and WebSocket support for building web applications
 
 [libs]
